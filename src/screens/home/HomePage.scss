@@ -1,0 +1,80 @@
+.home-page {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 80px 1fr;
+  height: 100vh;
+  div {
+    box-sizing: border-box;
+  }
+  header {
+    height: 80px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .vacation-info {
+      font-size: 25px;
+      //margin-left: 50px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .profile-settings-wrapper {
+      position: relative;
+      //margin-right: 50px;
+      padding: 5px;
+      .profile-settings-icon {
+        background: #334;
+        border-radius: 100%;
+        height: 70px;
+        width: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        span {
+          color: #6DBCDB;
+          font-size: 30px;
+          font-weight: 800;
+          text-transform: uppercase;
+        }
+      }
+      .settings-actions-list {
+        display: none;
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        transform: translateY(100%);
+        text-align: center;
+        background: #334;
+        border-radius: 1px;
+
+        .settings-actions-item {
+          padding: 8px;
+          color: #EFEFEF;
+          cursor: pointer;
+          display: block;
+          &:hover {
+            background: rgba(2, 33, 51, 0.6);
+          }
+          &.logout {
+            color: rgb(255, 41, 5);
+            font-weight: 800;
+          }
+        }
+      }
+      &:hover {
+        .settings-actions-list {
+          display: block;
+        }
+      }
+    }
+  }
+  main {
+    padding: 20px 0;
+  }
+}
+
+
+

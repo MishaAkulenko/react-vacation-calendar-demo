@@ -1,0 +1,194 @@
+.calendar-wrapper {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #afc7da;
+  border-radius: 5px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: 60px 1fr;
+
+  .calendar-header {
+    height: 60px;
+    width: 100%;
+    border-bottom: 1px solid #afc7da;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .subtitle {
+      display: flex;
+      align-items: center;
+      margin-left: 20px;
+      span {
+        margin: 0 20px;
+      }
+      .done-all {
+        &:hover {
+          color: #6DBCDB;
+        }
+      }
+      .clear-all {
+        &:hover {
+          color: rgba(255, 0, 0, 0.7);
+        }
+      }
+    }
+    .material-icons {
+      user-select: none;
+      cursor: pointer;
+      &:hover {
+        color: #75807d;
+      }
+      &.unactive {
+        color: #EFEFEF;
+        &:hover {
+          color: #EFEFEF;
+        }
+      }
+    }
+    .current-date {
+      span{
+        margin: 0 5px;
+        font-weight: 500;
+      }
+      .calendar-icon {
+        color: #afc7da;
+        font-size: 35px;
+        margin-left: 10px;
+        &.unactive {
+          color: #EFEFEF;
+        }
+      }
+    }
+    .date-selector-wrapper {
+      position: relative;
+      cursor: pointer;
+      width: 50px;
+      &:hover {
+        .list {
+          display: block;
+        }
+      }
+      .list {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: -5px;
+        transform: translateY(100%);
+        background: #ffffff;
+        padding-top: 10px;
+        z-index: 5;
+
+        div {
+          padding: 5px 10px;
+          border-bottom: 1px solid #afc7da;
+          border-right: 1px solid #afc7da;
+          border-left: 1px solid #afc7da;
+          cursor: pointer;
+          &:first-child{
+            border-top: 1px solid #afc7da;
+          }
+          &:hover {
+            color: #75807d;
+          }
+        }
+      }
+    }
+  }
+  .calendar-body {
+    display: grid;
+    grid-template-rows: 30px repeat(5, 1fr);
+    grid-auto-rows: 1fr;
+    grid-template-columns: repeat(7, 1fr);
+    margin-right: -1px;
+    margin-bottom: -1px;
+
+    .grid-cell {
+      border-right: 1px solid #afc7da;
+      border-bottom: 1px solid #afc7da;
+    }
+    .day-item {
+      display: grid;
+      grid-template-rows: 30px 1fr 20px;
+      padding-left: 5px;
+      position: relative;
+
+      &.not-current {
+        background: rgba(220, 218, 192, 0.64);
+      }
+      &.active {
+        background: rgba(0, 200, 0, 0.18);
+      }
+
+      .date {
+        width: 100%;
+        padding: 0 5px 0 20px;
+        text-align: right;
+        font-size: 17px;
+        span {
+          margin: 10px;
+        }
+      }
+      .do-select-wrapper {
+        color: #334;
+        font-weight: 500;
+        width: 100%;
+        align-items: center;
+        vertical-align: middle;
+        line-height: 30px;
+        display: flex;
+
+        .material-icons {
+          cursor: pointer;
+          vertical-align: middle;
+          font-size: 22px;
+          user-select: none;
+
+          &.remove {
+            color: rgba(255, 0, 0, 0.7);
+          }
+        }
+        .user-name {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          max-width: 150px;
+          font-size: 15px;
+          font-weight: bold;
+        }
+      }
+      .active-users {
+        width: 100%;
+        position: absolute;
+        top: 28px;
+        left: 5px;
+
+        .user-wrapper {
+          display: flex;
+          align-items: center;
+          padding-top: 3px;
+        }
+        .show-more-users {
+          position: absolute;
+          right: 15px;
+          top: 0;
+          cursor: pointer;
+        }
+        .avatar {
+          color: #89a7c1;
+          display: flex;
+          .material-icons{
+            font-size: 18px;
+          }
+        }
+        .user-name {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          max-width: 130px;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}

@@ -1,26 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Provider } from 'react-redux';
+import store from './store';
+import MainContainerComponent from "./components/MainContainer";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+import 'normalize.css';
+const SavedUser = localStorage.getItem('currentUser') && JSON.parse(localStorage.getItem('currentUser'));
+
+store.dispatch({
+    type: 'SET_USER_INFO',
+    user: SavedUser
+});
+store.dispatch({
+    type: 'SET_MAX_ACTIVE_VOCATION_DAYS',
+    availDays: SavedUser && SavedUser.vacation_days,
+});
+export default function App() {
+    return (
+      <Provider store={store}>
+          <MainContainerComponent/>
+      </Provider>
   );
 }
 
-export default App;
