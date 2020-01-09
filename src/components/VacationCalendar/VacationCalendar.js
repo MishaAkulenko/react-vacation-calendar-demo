@@ -5,9 +5,10 @@ import './VacationCalendar.scss';
 import VacationCalendarDateList from "./VacationCalendarDateList";
 import DateListSelector from "./DateListSelector";
 import store from "../../store";
+import {MONTHS_NAMES}  from '../../config/const.js';
+import {getDateLocale} from "../../utils/utils";
 
 function VacationCalendar ({availDays}) {
-    const months = ['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'];
     const reserved = availDays.max - availDays.avail;
     const initialDate = {
         month: new Date().getMonth(),
@@ -16,7 +17,7 @@ function VacationCalendar ({availDays}) {
     const  [dateInterval, setDateInterval] = useState(initialDate);
 
     function getMonthName(num) {
-        return months[num]
+        return MONTHS_NAMES[num]
     }
 
     function incrementDate() {
@@ -36,7 +37,8 @@ function VacationCalendar ({availDays}) {
         return dateInterval.month <= new Date().getMonth() || dateInterval.year < new Date().getFullYear()
     }
     function* generateYearsList() {
-        for (let i=2020; i<=2030; i++) yield i
+        let currentYear = new Date().getFullYear();
+        for (let i=currentYear; i<=currentYear + 5; i++) yield i
     }
     function saveData() {
 
@@ -44,9 +46,6 @@ function VacationCalendar ({availDays}) {
     function clearSelectedList() {
         store.dispatch({
             type: 'CLEAR_VACATION_LIST'
-        });
-        store.dispatch({
-            type: 'RESET_ACTIVE_VOCATION_DAYS'
         });
     }
 
@@ -57,13 +56,13 @@ function VacationCalendar ({availDays}) {
                     <i className={`material-icons${isPastMonth() ? ' unactive' : ''}`} onClick={decrementDate}>keyboard_arrow_left</i>
                     <i className="material-icons" onClick={incrementDate}>keyboard_arrow_right</i>
                     <div className={'vacation-info subtitle'}>
-                        <span>Зарезервировано {reserved} дней(я)</span>
+                        <span>Зарезервировано {reserved} {getDateLocale(availDays.avail, 'days')}</span>
                         {reserved ? <i className="material-icons done-all" title={'Принять'} onClick={saveData}>done_all</i> : null}
                         {reserved ? <i className="material-icons clear-all" title={'Очистить все'} onClick={clearSelectedList}>clear_all</i> : null}
                     </div>
                 </div>
                 <div className={'flex-center current-date'}>
-                    <DateListSelector dateList={months}
+                    <DateListSelector dateList={MONTHS_NAMES}
                                       changeDateInterval={(date, key)=>{setDateInterval({...dateInterval, month: key})}}
                     >
                         {getMonthName(dateInterval.month)}
@@ -85,7 +84,7 @@ function VacationCalendar ({availDays}) {
 }
 const mapStateToProps = (state) => {
     return {
-        availDays: state.activeVacationState
+        availDays: state.vacationState.availDaysToVacation
     }
 };
 export default  connect(mapStateToProps)(VacationCalendar)

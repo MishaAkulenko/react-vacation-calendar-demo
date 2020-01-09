@@ -3,9 +3,9 @@ import VacationDayItem from "./VacationCalendarDayItem";
 import {useEffect} from 'react';
 import usersApi from "../../api/usersApi";
 import store from "../../store";
+import {DAYS_NAMES as days}  from '../../config/const.js';
 
 function VacationCalendarDateList({dateInterval}) {
-    const days = ['ВС','ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
 
     useEffect(()=>{
         usersApi.GET_USERS_LIST()

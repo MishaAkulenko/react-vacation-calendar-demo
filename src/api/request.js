@@ -4,15 +4,16 @@ export default (url, params)=>{
         '/login'(){
             return {
                 login: params.login,
-                vacation_days: 7,
+                vacation_days: 14,
+                first_vacation_interval: false,
             }
         },
         '/users'(){
             return [
-                {login: 'Игорь', reserved:[...generateFakeDateList(0,7,0)], color:'#4cc1bc'},
-                {login: 'Дмитрий', reserved:[...generateFakeDateList(4,9,0)], color:'rgba(28,26,20,0.7)'},
-                {login: 'Владимир', reserved:[...generateFakeDateList(6,12,0)], color:'#4a7ac1'},
-                {login: 'Михаил', reserved:[...generateFakeDateList(7,16,0)], color:'#89a7c1'},
+                {login: 'Игорь', reserved:[...generateFakeDateList(18,30,0)], color:'#4cc1bc'},
+                {login: 'Дмитрий', reserved:[...generateFakeDateList(10,20,0)], color:'rgba(28,26,20,0.7)'},
+                {login: 'Владимир', reserved:[...generateFakeDateList(10,17,0)], color:'#4a7ac1'},
+                {login: 'Михаил', reserved:[...generateFakeDateList(15,29,0)], color:'#89a7c1'},
             ]
         }
     };

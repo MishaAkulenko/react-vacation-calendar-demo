@@ -6,34 +6,32 @@ const userReducer = function(state = null, action) {
     }
     return state;
 };
-const activeVacationReducer = function (state = {max:0, avail:0}, action) {
-    let avail = state.avail;
-    switch (action.type) {
-        case 'SET_MAX_ACTIVE_VOCATION_DAYS':
-            return state = {max: action.availDays, avail: action.availDays};
-        case 'INC_ACTIVE_VOCATION_DAYS':
-            return state.avail + 1 <= state.max ? {...state, avail: ++avail} : state;
-        case 'DEC_ACTIVE_VOCATION_DAYS':
-            return state.avail - 1 >= 0 ? {...state, avail: --avail} : state;
-        case 'RESET_ACTIVE_VOCATION_DAYS':
-            return {...state, avail: state.max};
-        default:
-            return state
-    }
+
+const vacationReducerInitialState = {
+    reservedDays: [],
+    availDaysToVacation: {max:0, avail:0},
 };
-const vacationReducer = function(state = [], action) {
+const vacationReducer = function(state = vacationReducerInitialState, action) {
+    let maxAvail = state.availDaysToVacation.max,
+        avail = state.availDaysToVacation.avail;
+
     switch (action.type) {
-        case 'ADD_VACATION_DAY':
-            return state.concat(action.vacationDays);
-        case 'REMOVE_VACATION_DAY':
-            let index = state.findIndex((date)=>{
-                return date.toString() === action.vacationDays.toString()
+        case 'SET_VACATION_PERIOD':
+            return state = Object.assign({}, state,{
+                reservedDays: state.reservedDays.concat(action.vacationDays),
+                availDaysToVacation: {...state.availDaysToVacation, avail: avail - action.vacationDays.length},
             });
-            let clonedArr = state.slice();
-            clonedArr.splice(index,1);
-            return clonedArr;
+        case 'REMOVE_VACATION_DAY':
+            let removedPosition = state.reservedDays.findIndex((date)=>{
+                return date.toString() === action.removedDay.toString()
+            });
+            let clonedArr = state.reservedDays.slice();
+            clonedArr.splice(removedPosition,1);
+            return {...state, reservedDays : clonedArr, availDaysToVacation: {max:maxAvail, avail: ++avail}};
         case 'CLEAR_VACATION_LIST':
-            return state = [];
+            return state = {...state, reservedDays: [], availDaysToVacation: {max: maxAvail, avail: maxAvail}};
+        case 'SET_MAX_ACTIVE_VOCATION_DAYS':
+            return state = {...state, availDaysToVacation : {max: action.availDays, avail: action.availDays}};
         default:
                 return state
     }
@@ -47,7 +45,6 @@ const usersReducer = function (state = [], action) {
 const reducers = combineReducers({
     userState: userReducer,
     vacationState: vacationReducer,
-    activeVacationState: activeVacationReducer,
     usersState: usersReducer,
 });
 
