@@ -1,18 +1,10 @@
 import React from "react";
 import {connect} from 'react-redux';
-import store from "../store";
 import {Link} from 'react-router-dom';
+import { bindActionCreators } from 'redux'
+import * as actions from '../actions/actions.js';
 
-const ProfileSettingsIcon = ({user})=>{
-
-    function logout() {
-        store.dispatch({
-            type: 'SET_USER_INFO',
-            user: null
-        });
-        localStorage.removeItem('currentUser');
-    }
-
+const ProfileSettingsIcon = ({user, doLogout})=>{
     return(
         <div className={'profile-settings-wrapper'}>
             <div className={'profile-settings-icon'}>
@@ -20,7 +12,7 @@ const ProfileSettingsIcon = ({user})=>{
             </div>
             <div className={'settings-actions-list'}>
                 <Link to={'/profile'} className={'settings settings-actions-item'}>Settings</Link>
-                <div className={'logout settings-actions-item'} onClick={logout}>Logout</div>
+                <div className={'logout settings-actions-item'} onClick={doLogout}>Logout</div>
             </div>
         </div>
     )
@@ -30,4 +22,9 @@ const mapStateToProps = (state)=>{
         user: state.userState
     }
 };
-export default connect(mapStateToProps)(ProfileSettingsIcon);
+const mapDispatchToProps = (dispatch)=>{
+    return {
+        doLogout: bindActionCreators(actions.doLogout, dispatch)
+    }
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileSettingsIcon);

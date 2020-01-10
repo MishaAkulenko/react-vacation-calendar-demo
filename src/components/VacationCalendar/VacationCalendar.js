@@ -4,17 +4,19 @@ import {useState} from 'react';
 import './VacationCalendar.scss';
 import VacationCalendarDateList from "./VacationCalendarDateList";
 import DateListSelector from "./DateListSelector";
-import store from "../../store";
+import store from "../../store/store";
 import {MONTHS_NAMES}  from '../../config/const.js';
 import {getDateLocale} from "../../utils/utils";
+import {bindActionCreators} from "redux";
+import * as actions from "../../actions/actions";
 
-function VacationCalendar ({availDays}) {
+function VacationCalendar ({availDays, reservedDays, sendSelectedVacationPeriod,vacationPeriodToConfirmation}) {
     const reserved = availDays.max - availDays.avail;
     const initialDate = {
         month: new Date().getMonth(),
         year: new Date().getFullYear(),
     };
-    const  [dateInterval, setDateInterval] = useState(initialDate);
+    const [dateInterval, setDateInterval] = useState(initialDate);
 
     function getMonthName(num) {
         return MONTHS_NAMES[num]
@@ -40,8 +42,8 @@ function VacationCalendar ({availDays}) {
         let currentYear = new Date().getFullYear();
         for (let i=currentYear; i<=currentYear + 5; i++) yield i
     }
-    function saveData() {
-
+    function sendSelectedPeriodToConfirm() {
+        sendSelectedVacationPeriod(reservedDays);
     }
     function clearSelectedList() {
         store.dispatch({
@@ -49,6 +51,24 @@ function VacationCalendar ({availDays}) {
         });
     }
 
+    function hasActiveSelectedDay() {
+        //Говнокод! Писал это поздно, поэтому уже плавило...
+        function compareDateIntervals() {
+            if(!Boolean(reserved)) return false;
+
+            let isCompare = true;
+            vacationPeriodToConfirmation.forEach((day)=>{
+                let datesCompare = reservedDays.find((item)=>{
+                    return item.getTime() === day.getTime()
+                });
+                if (!datesCompare) {isCompare = false}
+            });
+
+            return isCompare;
+        }
+
+        return (Boolean(reserved) && vacationPeriodToConfirmation.length !== reserved) || !compareDateIntervals();
+    }
     return (
         <div className={'calendar-wrapper'}>
             <div className={'calendar-header'}>
@@ -57,8 +77,15 @@ function VacationCalendar ({availDays}) {
                     <i className="material-icons" onClick={incrementDate}>keyboard_arrow_right</i>
                     <div className={'vacation-info subtitle'}>
                         <span>Зарезервировано {reserved} {getDateLocale(availDays.avail, 'days')}</span>
-                        {reserved ? <i className="material-icons done-all" title={'Принять'} onClick={saveData}>done_all</i> : null}
-                        {reserved ? <i className="material-icons clear-all" title={'Очистить все'} onClick={clearSelectedList}>clear_all</i> : null}
+                        {
+                            hasActiveSelectedDay() &&
+                            <i className="material-icons done-all"
+                               title={'Запросить'}
+                               onClick={sendSelectedPeriodToConfirm}>
+                                done_all
+                            </i>
+                        }
+                        {hasActiveSelectedDay() && <i className="material-icons clear-all" title={'Очистить все'} onClick={clearSelectedList}>clear_all</i>}
                     </div>
                 </div>
                 <div className={'flex-center current-date'}>
@@ -84,7 +111,14 @@ function VacationCalendar ({availDays}) {
 }
 const mapStateToProps = (state) => {
     return {
-        availDays: state.vacationState.availDaysToVacation
+        availDays: state.vacationState.availDaysToVacation,
+        reservedDays: state.vacationState.reservedDays,
+        vacationPeriodToConfirmation: state.vacationState.vacationPeriodToConfirmation,
     }
 };
-export default  connect(mapStateToProps)(VacationCalendar)
+const  mapDispatchToProps = (dispatch) =>{
+    return {
+        sendSelectedVacationPeriod: bindActionCreators(actions.sendSelectedVacationPeriod, dispatch)
+    }
+};
+export default  connect(mapStateToProps, mapDispatchToProps)(VacationCalendar)

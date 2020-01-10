@@ -1,4 +1,4 @@
-import { createStore, combineReducers } from 'redux';
+import {combineReducers} from "redux";
 
 const userReducer = function(state = null, action) {
     if (action.type === 'SET_USER_INFO') {
@@ -10,6 +10,8 @@ const userReducer = function(state = null, action) {
 const vacationReducerInitialState = {
     reservedDays: [],
     availDaysToVacation: {max:0, avail:0},
+    confirmationStatus: '',
+    vacationPeriodToConfirmation: [],
 };
 const vacationReducer = function(state = vacationReducerInitialState, action) {
     let maxAvail = state.availDaysToVacation.max,
@@ -28,12 +30,23 @@ const vacationReducer = function(state = vacationReducerInitialState, action) {
             let clonedArr = state.reservedDays.slice();
             clonedArr.splice(removedPosition,1);
             return {...state, reservedDays : clonedArr, availDaysToVacation: {max:maxAvail, avail: ++avail}};
-        case 'CLEAR_VACATION_LIST':
-            return state = {...state, reservedDays: [], availDaysToVacation: {max: maxAvail, avail: maxAvail}};
         case 'SET_MAX_ACTIVE_VOCATION_DAYS':
             return state = {...state, availDaysToVacation : {max: action.availDays, avail: action.availDays}};
+        case 'SET_VACATION_PERIOD_TO_CONFIRMATION':
+            return state = {...state, vacationPeriodToConfirmation : action.period};
+        case 'CHANGE_VACATION_STATUS':
+            return state = {...state, confirmationStatus : action.status};
+        case 'CLEAR_VACATION_LIST':
+            const toConfirmList = state.vacationPeriodToConfirmation;
+            return state = {
+                ...state,
+                reservedDays: [].concat(toConfirmList),
+                availDaysToVacation: {max: maxAvail, avail: maxAvail - toConfirmList.length}
+            };
+        case 'RESET_VACATION_STATE':
+            return state = {...vacationReducerInitialState};
         default:
-                return state
+            return state
     }
 };
 const usersReducer = function (state = [], action) {
@@ -42,10 +55,9 @@ const usersReducer = function (state = [], action) {
     }
     return state;
 };
-const reducers = combineReducers({
+
+export const reducers = combineReducers({
     userState: userReducer,
     vacationState: vacationReducer,
     usersState: usersReducer,
 });
-
-export default createStore(reducers)

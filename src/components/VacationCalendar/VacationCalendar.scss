@@ -122,7 +122,45 @@
       &.unavailable {
         background: #fcfcfc;
       }
+      &.wait {
+        background: rgba(52, 189, 189, 0.36);
+        .wait-confirm-indicator {
+          display: block;
+        }
+      }
+      &.current-day {
+        .date {
+          .month-name, span {
+            color: rgb(76, 193, 188);
+          }
+        }
 
+        .today-indicator {
+          font-size: 22px;
+          &::after {
+            color: rgb(76, 193, 188);
+            content: 'today';
+          }
+        }
+
+      }
+      &.confirmed {
+        background: rgba(0, 200, 0, 0.30);
+        .do-select-wrapper {
+          .user-name {
+            margin-left: 20px;
+          }
+          .material-icons {
+            display: none;
+          }
+        }
+      }
+      .wait-confirm-indicator {
+        display: none;
+        color: #454545;
+        font-size: 18px;
+        margin-right: 5px;
+      }
       .date {
         width: 100%;
         padding: 0 12px 0 5px;
@@ -169,33 +207,47 @@
       .active-users {
         width: 100%;
         position: absolute;
-        top: 28px;
+        top: 45px;
         left: 8px;
+        display: flex;
 
         .user-wrapper {
           display: flex;
           align-items: center;
           padding-top: 3px;
+          position: relative;
+
+          &:hover {
+            .user-login {
+              display: block;
+            }
+          }
         }
-        .show-more-users {
-          position: absolute;
-          right: 15px;
-          top: 0;
-          cursor: pointer;
-        }
+
         .avatar {
           color: #89a7c1;
           display: flex;
+          cursor: pointer;
           .material-icons{
-            font-size: 18px;
+            font-size: 24px;
+            margin-right: 5px;
+            &:hover {
+              text-shadow: 1px 1px 2px #6a6a6a;
+            }
           }
         }
-        .user-name {
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          max-width: 130px;
+        .user-login {
+          position: absolute;
+          top: -20px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: none;
           font-size: 14px;
+          background: #6DBCDB;
+          padding: 2px 5px;
+          border-radius: 3px;
+          z-index: 5;
+          color: #ffffff;
         }
       }
     }

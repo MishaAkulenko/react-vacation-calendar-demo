@@ -1,15 +1,16 @@
 import React from "react";
 import {connect} from "react-redux";
-import store from "../../store";
+import store from "../../store/store";
 import ActiveUsersList from "./ActiveUsersList";
 import {MONTHS_NAMES, MANDATORY_PERIOD}  from '../../config/const.js';
 
-function VacationDayItem({user, vacationDays, availDays, date, className, users}) {
+function VacationDayItem({user, vacationDays, availDays, date, className, users, vacationPeriodToConfirmation, confirmationStatus}) {
     const isInVacationList = checkIsThisDayInVacationList();
     const usersVacationsOnThisDay = getUsersVacationsOnThisDay();
     const isSelectAvailable = checkIsCurrentDayAvailToVacationSelect();
+
     const classList = {
-        wrapper: ['grid-cell day-item', isInVacationList ? 'active' : '', !isSelectAvailable ? 'unavailable' : '', className || ''],
+        wrapper: ['grid-cell day-item', isInVacationList ? 'active' : '', !isSelectAvailable ? 'unavailable' : '', className || '', getConfirmationStatusStyle()],
         dateIndicator: [`date flex-between`,date.getDay() === 0 || date.getDay() === 6 ? ' holiday' : '']
     };
 
@@ -34,7 +35,6 @@ function VacationDayItem({user, vacationDays, availDays, date, className, users}
         });
     }
     function removeDayFromVacationList() {
-
         if (user.first_vacation_interval) {
             store.dispatch({
                 type: 'CLEAR_VACATION_LIST',
@@ -61,6 +61,18 @@ function VacationDayItem({user, vacationDays, availDays, date, className, users}
         if (!user.first_vacation_interval && user.vacation_days < MANDATORY_PERIOD) return false; //Если на первый отпуск в году не накопилось 14 дней, то его взять нельзя
         return date.getTime() >= new Date(currentDate.getFullYear(), currentDate.getMonth(),currentDate.getDate() + MANDATORY_PERIOD).getTime()
     }
+    function getConfirmationStatusStyle(){
+        return `${checkConfirmationStatus()} ${getCurrentDayStyle()}`;
+    }
+    function getCurrentDayStyle() {
+        return date.getDate()=== new Date().getDate() ? 'current-day' : '';
+    }
+    function checkConfirmationStatus() {
+        let isThisDayOnConfirmationPeriod = vacationPeriodToConfirmation.find((day)=>{
+            return date.getTime() === day.getTime()
+        });
+        return isThisDayOnConfirmationPeriod && confirmationStatus
+    }
 
     return (
         <div className={classList.wrapper.join(' ')}>
@@ -79,7 +91,10 @@ function VacationDayItem({user, vacationDays, availDays, date, className, users}
             </div>
             <ActiveUsersList usersVacationsOnThisDay={usersVacationsOnThisDay}/>
             <div className={classList.dateIndicator.join(' ')}>
-                <span className={`month-name`}>{MONTHS_NAMES[date.getMonth()]}</span>
+                <div className='flex-center'>
+                    <i className="material-icons today-indicator" title='сегодня'> </i>
+                    <span className={`month-name`}>{MONTHS_NAMES[date.getMonth()]}</span>
+                </div>
                 <span>{date.getDate()}</span>
             </div>
         </div>
@@ -91,6 +106,8 @@ const mapStateToProps = (state) => {
         users: state.usersState,
         vacationDays: state.vacationState.reservedDays,
         availDays: state.vacationState.availDaysToVacation,
+        vacationPeriodToConfirmation: state.vacationState.vacationPeriodToConfirmation,
+        confirmationStatus: state.vacationState.confirmationStatus,
     }
 };
 export default connect(mapStateToProps)(VacationDayItem);

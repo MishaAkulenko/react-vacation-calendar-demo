@@ -2,13 +2,13 @@ import React from "react";
 import './LoginPage.scss';
 import logo from '../../assets/img/logo.png';
 import {useState} from 'react';
-import {withRouter} from 'react-router-dom';
 import FormInput from "../../components/FormInput";
-import store from "../../store";
-import authApi from "../../api/authApi";
 import LoaderButton from "../../components/LoaderButton";
+import * as actions from "../../actions/actions";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
 
-function LoginPage({history, user}) {
+function LoginPage({doLogin}) {
     const [loginInfo, setLoginInfo] = useState({
         login: '',
         password: '',
@@ -17,26 +17,14 @@ function LoginPage({history, user}) {
         login: false,
         password: false,
     });
+
     const [loading, setLoading] = useState(false);
-    function doLogin(e) {
+    function loginUser(e) {
         e.preventDefault();
 
         validateForm(()=>{
             setLoading(true);
-            authApi.LOGIN(loginInfo)
-                .then((response)=>{
-                    localStorage.setItem('currentUser', JSON.stringify(response));
-                    store.dispatch({
-                        type: 'SET_USER_INFO',
-                        user: response
-                    });
-                    store.dispatch({
-                        type: 'SET_MAX_ACTIVE_VOCATION_DAYS',
-                        availDays: response.vacation_days,
-                    });
-                    setLoading(false);
-                    history.push('/')
-                });
+            doLogin(loginInfo)
         });
     }
     function validateForm(cb) {
@@ -70,7 +58,7 @@ function LoginPage({history, user}) {
                     <img src={logo} alt="кря" className='logo'/>
                 </header>
                 <section>
-                    <form onSubmit={doLogin}>
+                    <form onSubmit={loginUser}>
                         <p>Введите любой логин</p>
                         <FormInput type='text'
                                    setValue={(e) => {
@@ -95,4 +83,10 @@ function LoginPage({history, user}) {
     )
 }
 
-export default withRouter(LoginPage);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        doLogin: bindActionCreators(actions.doLogin, dispatch)
+    }
+};
+
+export default connect(null,mapDispatchToProps)(LoginPage);

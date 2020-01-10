@@ -1,21 +1,15 @@
 import React from "react";
 import VacationDayItem from "./VacationCalendarDayItem";
 import {useEffect} from 'react';
-import usersApi from "../../api/usersApi";
-import store from "../../store";
 import {DAYS_NAMES as days}  from '../../config/const.js';
-
-function VacationCalendarDateList({dateInterval}) {
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import * as actions from "../../actions/actions";
+function VacationCalendarDateList({dateInterval, fetchUsersVacationList}) {
 
     useEffect(()=>{
-        usersApi.GET_USERS_LIST()
-            .then((response)=>{
-                store.dispatch({
-                    type: 'SET_USERS_LIST',
-                    users: response,
-                })
-            });
-    },[]);
+        fetchUsersVacationList();
+    },[fetchUsersVacationList]);
 
     function getDaysInMonth (year, month) {
         return 33 - new Date(year, month, 33).getDate();
@@ -71,5 +65,9 @@ function VacationCalendarDateList({dateInterval}) {
         </div>
     )
 }
-
-export default VacationCalendarDateList;
+const  mapDispatchToProps = (dispatch) =>{
+    return {
+        fetchUsersVacationList: bindActionCreators(actions.fetchUsersVacationList, dispatch)
+    }
+};
+export default connect(null, mapDispatchToProps)(VacationCalendarDateList);

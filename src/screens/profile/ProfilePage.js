@@ -1,8 +1,13 @@
 import React from "react";
+import './ProfilePage.scss';
 
  const ProfilePage = () =>{
     return(
-        <div>PROFILE PAGE</div>
+        <div className="profile-page">
+            <i className="material-icons">
+                settings_applications
+            </i>
+        </div>
     )
 };
 
